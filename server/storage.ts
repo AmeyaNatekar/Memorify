@@ -1,9 +1,6 @@
-import { users, type User, type InsertUser, images, type Image, type InsertImage, friends, type Friend, type InsertFriend, groups, type Group, type InsertGroup, groupMembers, type GroupMember, type InsertGroupMember, imageShares, type ImageShare, type InsertImageShare, notifications, type Notification, type InsertNotification, type ImageWithShares, type FriendWithUser, type GroupWithMembers, type NotificationWithDetails } from "@shared/schema";
-import { eq, and, or, ne, like, desc } from "drizzle-orm";
+import { type User, type InsertUser, type Image, type InsertImage, type Friend, type InsertFriend, type Group, type InsertGroup, type GroupMember, type InsertGroupMember, type ImageShare, type InsertImageShare, type Notification, type InsertNotification, type ImageWithShares, type FriendWithUser, type GroupWithMembers, type NotificationWithDetails } from "@shared/schema";
 import session from "express-session";
-import createMemoryStore from "memorystore";
-
-const MemoryStore = createMemoryStore(session);
+import { DatabaseStorage } from './database-storage';
 
 export interface IStorage {
   // User operations
@@ -489,4 +486,5 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Use the database storage implementation instead of memory storage
+export const storage = new DatabaseStorage();
