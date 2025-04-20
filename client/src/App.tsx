@@ -11,6 +11,7 @@ import AuthPage from "@/pages/auth-page";
 import UploadsPage from "@/pages/uploads-page";
 import GroupsPage from "@/pages/groups-page";
 import FriendsPage from "@/pages/friends-page";
+import CalendarPage from "@/pages/calendar-page";
 
 function Router() {
   return (
@@ -19,6 +20,7 @@ function Router() {
       <ProtectedRoute path="/uploads" component={UploadsPage} />
       <ProtectedRoute path="/groups" component={GroupsPage} />
       <ProtectedRoute path="/friends" component={FriendsPage} />
+      <ProtectedRoute path="/calendar" component={CalendarPage} />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>

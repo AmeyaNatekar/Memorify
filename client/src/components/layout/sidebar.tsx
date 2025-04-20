@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import { Home, Image, Users, UserRound, LogOut } from "lucide-react";
+import { Home, Image, Users, UserRound, LogOut, CalendarDays } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,11 @@ export default function Sidebar() {
       path: "/uploads", 
       label: "My Uploads", 
       icon: <Image size={isMobile ? 24 : 20} /> 
+    },
+    { 
+      path: "/calendar", 
+      label: "Calendar", 
+      icon: <CalendarDays size={isMobile ? 24 : 20} /> 
     },
     { 
       path: "/groups", 
