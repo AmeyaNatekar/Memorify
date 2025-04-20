@@ -1,5 +1,5 @@
 import { type User, type InsertUser, type Image, type InsertImage, type Friend, type InsertFriend, type Group, type InsertGroup, type GroupMember, type InsertGroupMember, type ImageShare, type InsertImageShare, type Notification, type InsertNotification, type ImageWithShares, type FriendWithUser, type GroupWithMembers, type NotificationWithDetails } from "@shared/schema";
-import session from "express-session";
+import { Store } from "express-session";
 import { DatabaseStorage } from './database-storage';
 
 export interface IStorage {
@@ -49,7 +49,7 @@ export interface IStorage {
   markAllNotificationsAsRead(userId: number): Promise<void>;
   
   // Session store
-  sessionStore: session.SessionStore;
+  sessionStore: Store;
 }
 
 export class MemStorage implements IStorage {
@@ -69,7 +69,7 @@ export class MemStorage implements IStorage {
   currentImageShareId: number;
   currentNotificationId: number;
   
-  sessionStore: session.SessionStore;
+  sessionStore: Store;
 
   constructor() {
     this.usersStore = new Map();
@@ -88,6 +88,9 @@ export class MemStorage implements IStorage {
     this.currentImageShareId = 1;
     this.currentNotificationId = 1;
     
+    // Using a basic memory store for session data
+    const createMemoryStore = require('memorystore');
+    const MemoryStore = createMemoryStore(require('express-session'));
     this.sessionStore = new MemoryStore({
       checkPeriod: 86400000, // 24 hours
     });

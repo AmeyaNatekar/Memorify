@@ -98,9 +98,5 @@ async function initDatabase() {
   }
 }
 
-// Run the function if this file is executed directly
-if (require.main === module) {
-  initDatabase();
-}
-
+// Export the function for use in other files
 export default initDatabase;
