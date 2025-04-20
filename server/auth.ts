@@ -5,11 +5,11 @@ import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
-import { User } from "@shared/schema";
+import { User as SelectUser } from "@shared/schema";
 
 declare global {
   namespace Express {
-    interface User extends User {}
+    interface User extends SelectUser {}
   }
 }
 
@@ -29,19 +29,15 @@ export async function comparePasswords(supplied: string, stored: string): Promis
 }
 
 export function setupAuth(app: Express) {
-  // Generate a random session secret if not provided
-  const sessionSecret = process.env.SESSION_SECRET || randomBytes(32).toString("hex");
-  
   const sessionSettings: session.SessionOptions = {
-    secret: sessionSecret,
+    secret: process.env.SESSION_SECRET || "your-secret-key",
     resave: false,
     saveUninitialized: false,
-    store: storage.sessionStore,
     cookie: {
-      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    }
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    },
+    store: storage.sessionStore,
   };
 
   app.set("trust proxy", 1);
@@ -58,8 +54,8 @@ export function setupAuth(app: Express) {
         } else {
           return done(null, user);
         }
-      } catch (error) {
-        return done(error);
+      } catch (err) {
+        return done(err);
       }
     }),
   );
@@ -69,8 +65,8 @@ export function setupAuth(app: Express) {
     try {
       const user = await storage.getUser(id);
       done(null, user);
-    } catch (error) {
-      done(error);
+    } catch (err) {
+      done(err);
     }
   });
 
@@ -78,7 +74,7 @@ export function setupAuth(app: Express) {
     try {
       const existingUser = await storage.getUserByUsername(req.body.username);
       if (existingUser) {
-        return res.status(400).send("Username already exists");
+        return res.status(400).json({ message: "Username already exists" });
       }
 
       const user = await storage.createUser({
@@ -90,8 +86,8 @@ export function setupAuth(app: Express) {
         if (err) return next(err);
         res.status(201).json(user);
       });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   });
 

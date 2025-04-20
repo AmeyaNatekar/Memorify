@@ -1,7 +1,7 @@
 import { db, sqlite } from './database';
 import { users, type User, type InsertUser, images, type Image, type InsertImage, friends, type Friend, type InsertFriend, groups, type Group, type InsertGroup, groupMembers, type GroupMember, type InsertGroupMember, imageShares, type ImageShare, type InsertImageShare, notifications, type Notification, type InsertNotification, type ImageWithShares, type FriendWithUser, type GroupWithMembers, type NotificationWithDetails } from "@shared/schema";
 import { eq, and, or, ne, like, desc, inArray, sql } from "drizzle-orm";
-import session from "express-session";
+import session, { Store } from "express-session";
 import connectSqlite from "connect-sqlite3";
 
 const SQLiteStore = connectSqlite(session);
@@ -9,7 +9,7 @@ const SQLiteStore = connectSqlite(session);
 import { IStorage } from './storage';
 
 export class DatabaseStorage implements IStorage {
-  sessionStore: session.SessionStore;
+  sessionStore: Store;
 
   constructor() {
     this.sessionStore = new SQLiteStore({
