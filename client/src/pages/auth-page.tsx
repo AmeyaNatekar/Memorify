@@ -36,8 +36,13 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const { user, loginMutation, registerMutation } = useAuth();
   const [location, navigate] = useLocation();
+  
+  // Simple form state for direct testing
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  // For login form
+  // For login form - kept for compatibility
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -46,7 +51,7 @@ export default function AuthPage() {
     },
   });
 
-  // For registration form
+  // For registration form - kept for compatibility
   const registerForm = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -63,13 +68,24 @@ export default function AuthPage() {
     }
   }, [user, navigate]);
 
-  const onLoginSubmit = (data: LoginFormValues) => {
-    loginMutation.mutate(data);
+  const onLoginSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    loginMutation.mutate({
+      username,
+      password
+    });
   };
 
-  const onRegisterSubmit = (data: RegisterFormValues) => {
-    const { confirmPassword, ...userData } = data;
-    registerMutation.mutate(userData);
+  const onRegisterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    registerMutation.mutate({
+      username,
+      password
+    });
   };
 
   return (
@@ -85,119 +101,95 @@ export default function AuthPage() {
           </div>
 
           {isLogin ? (
-            // Login Form
-            <Form {...loginForm}>
-              <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                <FormField
-                  control={loginForm.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter your username"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={loginForm.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Enter your password"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={loginMutation.isPending}
-                >
-                  {loginMutation.isPending ? "Signing in..." : "Sign In"}
-                </Button>
+            // Simple Login Form
+            <div className="space-y-4">
+              <form onSubmit={onLoginSubmit}>
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="username" className="block text-sm font-medium mb-1">Username</label>
+                    <input
+                      id="username"
+                      type="text"
+                      className="w-full rounded-md border border-input px-3 py-2"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="Enter your username"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="password" className="block text-sm font-medium mb-1">Password</label>
+                    <input
+                      id="password"
+                      type="password"
+                      className="w-full rounded-md border border-input px-3 py-2"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter your password"
+                    />
+                  </div>
+                  
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={loginMutation.isPending}
+                  >
+                    {loginMutation.isPending ? "Signing in..." : "Sign In"}
+                  </Button>
+                </div>
               </form>
-            </Form>
+            </div>
           ) : (
-            // Register Form
-            <Form {...registerForm}>
-              <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
-                <FormField
-                  control={registerForm.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Choose a username"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={registerForm.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Create a password"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={registerForm.control}
-                  name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Confirm Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Confirm your password"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={registerMutation.isPending}
-                >
-                  {registerMutation.isPending ? "Creating account..." : "Sign Up"}
-                </Button>
+            // Simple Register Form
+            <div className="space-y-4">
+              <form onSubmit={onRegisterSubmit}>
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="reg-username" className="block text-sm font-medium mb-1">Username</label>
+                    <input
+                      id="reg-username"
+                      type="text"
+                      className="w-full rounded-md border border-input px-3 py-2"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="Choose a username"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="reg-password" className="block text-sm font-medium mb-1">Password</label>
+                    <input
+                      id="reg-password"
+                      type="password"
+                      className="w-full rounded-md border border-input px-3 py-2"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Create a password"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="confirm-password" className="block text-sm font-medium mb-1">Confirm Password</label>
+                    <input
+                      id="confirm-password"
+                      type="password"
+                      className="w-full rounded-md border border-input px-3 py-2"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm your password"
+                    />
+                  </div>
+                  
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={registerMutation.isPending}
+                  >
+                    {registerMutation.isPending ? "Creating account..." : "Sign Up"}
+                  </Button>
+                </div>
               </form>
-            </Form>
+            </div>
           )}
 
           <div className="mt-6 text-center">
