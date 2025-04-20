@@ -9,6 +9,10 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useLocation } from "wouter";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { format } from "date-fns";
 
 type TimelineFilterProps = {
   dates: { year: number; month: number }[];
@@ -26,6 +30,11 @@ export default function TimelineFilter({
   const [scrollPosition, setScrollPosition] = useState(0);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [calendarDate, setCalendarDate] = useState<Date | undefined>(
+    selectedDate ? new Date(selectedDate.year, selectedDate.month) : undefined
+  );
+  const [location, navigate] = useLocation();
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   // Format month and year
@@ -102,14 +111,54 @@ export default function TimelineFilter({
     }
   };
 
+  // Handle calendar date selection
+  const handleCalendarSelect = (date: Date | undefined) => {
+    setCalendarDate(date);
+    setCalendarOpen(false);
+    
+    if (date) {
+      onSelect({
+        year: date.getFullYear(),
+        month: date.getMonth()
+      });
+    }
+  };
+  
+  // Navigate to calendar page for full calendar view
+  const handleFullCalendarClick = () => {
+    navigate('/calendar');
+  };
+  
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">Timeline</h3>
-        <div className="flex items-center">
-          <Button variant="ghost" size="icon">
-            <Calendar className="h-5 w-5 text-gray-600" />
-          </Button>
+        <div className="flex items-center space-x-2">
+          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Calendar className="h-5 w-5 text-gray-600" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <CalendarComponent
+                mode="single"
+                selected={calendarDate}
+                onSelect={handleCalendarSelect}
+                initialFocus
+              />
+              <div className="p-3 border-t border-border">
+                <Button 
+                  variant="outline" 
+                  className="w-full text-sm"
+                  onClick={handleFullCalendarClick}
+                >
+                  View Full Calendar
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+          
           <Select 
             onValueChange={handleTimePeriodChange}
             defaultValue="all"
