@@ -476,9 +476,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "You are not a member of this group" });
       }
       
+      // Get basic image info first
       const images = await storage.getGroupImages(groupId);
-      res.json(images);
+      
+      // Then for each image, get the full details with shares
+      const imagesWithShares = await Promise.all(
+        images.map(async (image) => {
+          return await storage.getImageWithShares(image.id);
+        })
+      );
+      
+      // Filter out any null results (in case an image was deleted)
+      const validImagesWithShares = imagesWithShares.filter(image => image !== undefined);
+      
+      console.log(`Found ${validImagesWithShares.length} images for group ${groupId}`);
+      res.json(validImagesWithShares);
     } catch (error) {
+      console.error("Failed to fetch group images:", error);
       res.status(500).json({ message: "Failed to fetch group images" });
     }
   });

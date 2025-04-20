@@ -138,14 +138,21 @@ export default function ImageUploadModal({
 
       return await res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Upload successful:", data);
+      // Invalidate all image-related queries
       queryClient.invalidateQueries({ queryKey: ["/api/images"] });
       queryClient.invalidateQueries({ queryKey: ["/api/images/dates"] });
       queryClient.invalidateQueries({ queryKey: ["/api/images/by-date"] });
       
       // Invalidate group images if sharing with a group
       if (selectedGroups.length > 0) {
+        // Invalidate all groups images queries
+        queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
+        
+        // Also invalidate specific group image queries
         selectedGroups.forEach(group => {
+          console.log("Invalidating cache for group:", group.id);
           queryClient.invalidateQueries({ queryKey: ["/api/groups", group.id, "images"] });
         });
       }

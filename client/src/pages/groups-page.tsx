@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Group, GroupWithMembers, ImageWithShares } from "@shared/schema";
+import { Group, GroupWithMembers, ImageWithShares, Image } from "@shared/schema";
 import Sidebar from "@/components/layout/sidebar";
 import TopNavBar from "@/components/layout/top-nav-bar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -49,6 +49,12 @@ export default function GroupsPage() {
   // Fetch selected group images
   const { data: groupImages, isLoading: isGroupImagesLoading } = useQuery<ImageWithShares[]>({
     queryKey: ["/api/groups", selectedGroup?.id, "images"],
+    queryFn: selectedGroup ? 
+      () => fetch(`/api/groups/${selectedGroup.id}/images`).then(res => {
+        if (!res.ok) throw new Error("Failed to fetch group images");
+        return res.json();
+      }) : 
+      undefined,
     enabled: !!selectedGroup,
   });
 
