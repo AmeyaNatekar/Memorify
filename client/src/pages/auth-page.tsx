@@ -94,7 +94,7 @@ export default function AuthPage() {
       <div className="flex-1 bg-white flex items-center justify-center">
         <div className="max-w-md w-full px-6 py-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-primary">Imageshare</h1>
+            <h1 className="text-3xl font-bold text-primary">Memorify</h1>
             <p className="text-muted-foreground mt-2">
               Share your memories with friends and groups
             </p>

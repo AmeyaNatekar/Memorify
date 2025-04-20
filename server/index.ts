@@ -66,9 +66,8 @@ app.use((req, res, next) => {
   const port = 5000;
   server.listen({
     port,
-    host: "0.0.0.0",
-    reusePort: true,
+    host: "127.0.0.1" // Only specify port and host
   }, () => {
-    log(`serving on port ${port}`);
+    log(`serving on http://127.0.0.1:${port}`);
   });
 })();

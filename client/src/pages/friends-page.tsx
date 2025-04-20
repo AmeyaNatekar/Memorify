@@ -158,7 +158,7 @@ export default function FriendsPage() {
                   <p className="text-gray-500 mb-4">
                     You don't have any friends yet. Go to the "Find Friends" tab to search for users.
                   </p>
-                  <Button onClick={() => document.querySelector('button[value="find"]')?.click()}>
+                  <Button onClick={() => (document.querySelector('button[value="find"]') as HTMLButtonElement)?.click()}>
                     Find Friends
                   </Button>
                 </div>

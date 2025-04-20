@@ -46,7 +46,7 @@ export default function Sidebar() {
   return (
     <aside className="w-16 md:w-64 h-full bg-white border-r border-gray-200 flex flex-col">
       <div className="p-4 border-b border-gray-200">
-        <h1 className="text-xl font-bold text-primary hidden md:block">Imageshare</h1>
+        <h1 className="text-xl font-bold text-primary hidden md:block">Memorify</h1>
         <div className="md:hidden flex justify-center">
           <span className="text-2xl font-bold text-primary">IS</span>
         </div>
