@@ -29,6 +29,11 @@ export default function FriendsPage() {
   const { data: searchResults, isLoading: isSearchLoading } = useQuery<User[]>({
     queryKey: ["/api/users/search", searchQuery],
     enabled: searchQuery.length >= 3,
+    queryFn: async () => {
+      if (searchQuery.length < 3) return [];
+      const res = await apiRequest("GET", `/api/users/search?q=${encodeURIComponent(searchQuery)}`);
+      return res.json();
+    },
   });
 
   // Send friend request mutation

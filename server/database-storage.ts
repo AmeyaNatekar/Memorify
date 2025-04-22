@@ -94,8 +94,8 @@ export class DatabaseStorage implements IStorage {
     const results = await query;
     
     return results.map(result => ({
-      year: parseInt(result.year),
-      month: parseInt(result.month) - 1 // JavaScript months are 0-indexed
+      year: parseInt(result.year as string),
+      month: parseInt(result.month as string) - 1 // JavaScript months are 0-indexed
     }));
   }
 
@@ -109,7 +109,7 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(imageShares.imageId, imageId),
-          ne(imageShares.userId, null)
+          sql`${imageShares.userId} IS NOT NULL`
         )
       );
     
@@ -121,7 +121,7 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(imageShares.imageId, imageId),
-          ne(imageShares.groupId, null)
+          sql`${imageShares.groupId} IS NOT NULL`
         )
       );
     
